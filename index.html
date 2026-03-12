@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonicNeon - Cyberpunk Music Player</title>
+    <title>SonicNeon - Cyberpunk Player</title>
+    <!-- Cargamos Tailwind CSS y Google Fonts para el diseño Cyberpunk -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    
     <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f2ff;
+            --bg-dark: #050505;
+        }
+
         body {
             background-color: #000;
             font-family: 'Inter', sans-serif;
@@ -17,171 +25,214 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
 
-        /* Contenedor del Móvil */
-        .phone-container {
+        /* Contenedor principal que simula el móvil de la captura */
+        .app-container {
             width: 360px;
             height: 740px;
-            background: #050505;
-            border-radius: 40px;
+            background: var(--bg-dark);
+            border-radius: 42px;
             position: relative;
-            overflow: hidden;
-            border: 4px solid #1a1a1a;
-            box-shadow: 0 0 50px rgba(255, 0, 255, 0.1);
             display: flex;
             flex-direction: column;
+            border: 4px solid #1a1a1a;
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.15);
+            overflow: hidden;
         }
 
-        .neon-glow {
-            text-shadow: 0 0 10px #f0f;
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        .neon-text {
+            text-shadow: 0 0 10px var(--neon-pink);
         }
 
-        .accent-pink { color: #ff00ff; }
-        .bg-accent-pink { background-color: #ff00ff; }
-        
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Scrollbar invisible */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-
-        .tab-active {
-            color: #ff00ff;
-            border-bottom: 2px solid #ff00ff;
-        }
-
-        .search-bar {
+        .search-input {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 0, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
-        .btn-recent {
-            background: linear-gradient(90deg, #ff00ff, #aa00ff);
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+        .search-input:focus {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+            outline: none;
         }
 
-        .nav-bar {
-            background: rgba(5, 5, 5, 0.95);
+        .btn-primary {
+            background: linear-gradient(90deg, #ff00ff, #8a00ff);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+            transition: transform 0.2s ease;
+        }
+
+        .btn-primary:active { transform: scale(0.95); }
+
+        .tab-active {
+            color: var(--neon-pink);
+            position: relative;
+        }
+
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--neon-pink);
+            box-shadow: 0 0 8px var(--neon-pink);
+        }
+
+        /* Scroll personalizado */
+        .custom-scroll::-webkit-scrollbar { width: 0px; }
+
+        .song-item {
+            transition: background 0.2s ease;
+        }
+
+        .song-item:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Barra de navegación inferior tipo Android/iOS */
+        .bottom-nav {
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
 <body>
 
-    <div class="phone-container">
+    <div class="app-container">
         <!-- Header -->
         <header class="p-6 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <div class="w-6 h-6 rounded-full border-2 border-pink-500 flex items-center justify-center">
                     <div class="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight">SonicNeon</h1>
+                <h1 class="text-xl font-bold orbitron tracking-tighter">SonicNeon</h1>
             </div>
-            <button class="w-10 h-10 glass-card rounded-xl flex items-center justify-center">
+            <button class="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-white/10">
                 <span class="material-symbols-rounded text-pink-500">settings</span>
             </button>
         </header>
 
-        <!-- Search -->
+        <!-- Search Bar -->
         <div class="px-6 mb-6">
-            <div class="search-bar w-full rounded-2xl p-4 flex items-center gap-3">
-                <span class="material-symbols-rounded text-pink-500 opacity-70">search</span>
-                <input type="text" placeholder="Buscar canciones, artistas..." class="bg-transparent border-none outline-none text-sm w-full text-zinc-400">
+            <div class="search-input w-full rounded-2xl p-4 flex items-center gap-3">
+                <span class="material-symbols-rounded text-pink-500 opacity-60">search</span>
+                <input type="text" placeholder="Buscar canciones, artistas..." class="bg-transparent border-none text-sm w-full text-zinc-300 placeholder-zinc-600">
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="px-6 flex gap-6 text-sm font-semibold text-zinc-500 mb-6 overflow-x-auto no-scrollbar">
-            <span class="tab-active pb-1 whitespace-nowrap">Canciones</span>
-            <span class="whitespace-nowrap">Playlist</span>
-            <span class="whitespace-nowrap">Carpetas</span>
-            <span class="whitespace-nowrap">Artistas</span>
+        <!-- Navigation Tabs -->
+        <div class="px-6 flex gap-6 text-sm font-semibold text-zinc-500 mb-6 overflow-x-auto custom-scroll">
+            <span class="tab-active cursor-pointer">Canciones</span>
+            <span class="hover:text-zinc-300 cursor-pointer whitespace-nowrap">Playlist</span>
+            <span class="hover:text-zinc-300 cursor-pointer">Carpetas</span>
+            <span class="hover:text-zinc-300 cursor-pointer">Artistas</span>
+            <span class="hover:text-zinc-300 cursor-pointer">Álbumes</span>
         </div>
 
         <!-- Quick Filters -->
         <div class="px-6 flex gap-3 mb-6">
-            <button class="btn-recent px-4 py-2 rounded-full text-[10px] font-black flex items-center gap-2 uppercase tracking-widest">
-                <span class="material-symbols-rounded text-sm">schedule</span> Recientes
+            <button class="btn-primary px-5 py-2.5 rounded-full text-[11px] font-black flex items-center gap-2 uppercase tracking-widest text-white">
+                <span class="material-symbols-rounded text-base">schedule</span> Recientes
             </button>
-            <button class="bg-zinc-900 px-4 py-2 rounded-full text-[10px] font-black flex items-center gap-2 uppercase tracking-widest text-zinc-400">
-                <span class="material-symbols-rounded text-sm">trending_up</span> Más reproducidos
+            <button class="bg-zinc-900/50 border border-white/5 px-5 py-2.5 rounded-full text-[11px] font-black flex items-center gap-2 uppercase tracking-widest text-zinc-400 hover:bg-zinc-800">
+                <span class="material-symbols-rounded text-base">trending_up</span> Más reproducidos
             </button>
         </div>
 
         <!-- Song List -->
-        <main class="flex-1 overflow-y-auto px-6 space-y-4 no-scrollbar pb-24">
-            <!-- Song 1 -->
-            <div class="flex items-center gap-4 group">
-                <img src="https://picsum.photos/seed/neon1/200" class="w-14 h-14 rounded-2xl object-cover shadow-lg group-active:scale-95 transition-transform" alt="Cover">
-                <div class="flex-1">
-                    <h3 class="font-bold text-sm">Neon Nights</h3>
-                    <p class="text-xs text-zinc-500 italic">Synth Weaver</p>
+        <main class="flex-1 overflow-y-auto px-6 space-y-5 custom-scroll pb-24">
+            <!-- Canción 1 -->
+            <div class="song-item flex items-center gap-4 group cursor-pointer">
+                <div class="relative">
+                    <img src="https://picsum.photos/seed/neon1/200" class="w-14 h-14 rounded-2xl object-cover shadow-lg" alt="Cover">
+                    <div class="absolute inset-0 bg-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <div class="flex items-center gap-3 text-zinc-600">
-                    <span class="material-symbols-rounded text-lg">favorite</span>
-                    <span class="material-symbols-rounded">chevron_right</span>
+                <div class="flex-1">
+                    <h3 class="font-bold text-sm tracking-wide">Neon Nights</h3>
+                    <p class="text-xs text-zinc-500 italic mt-0.5">Synth Weaver</p>
+                </div>
+                <div class="flex items-center gap-4 text-zinc-600">
+                    <span class="material-symbols-rounded text-xl hover:text-pink-500 transition-colors">favorite</span>
+                    <span class="material-symbols-rounded text-2xl">chevron_right</span>
                 </div>
             </div>
 
-            <!-- Song 2 -->
-            <div class="flex items-center gap-4 group">
-                <img src="https://picsum.photos/seed/cyber2/200" class="w-14 h-14 rounded-2xl object-cover group-active:scale-95 transition-transform" alt="Cover">
+            <!-- Canción 2 -->
+            <div class="song-item flex items-center gap-4 group cursor-pointer">
+                <img src="https://picsum.photos/seed/cyber2/200" class="w-14 h-14 rounded-2xl object-cover shadow-lg" alt="Cover">
                 <div class="flex-1">
-                    <h3 class="font-bold text-sm">Cyber Rush</h3>
-                    <p class="text-xs text-zinc-500 italic">Glitch Master</p>
+                    <h3 class="font-bold text-sm tracking-wide">Cyber Rush</h3>
+                    <p class="text-xs text-zinc-500 italic mt-0.5">Glitch Master</p>
                 </div>
-                <div class="flex items-center gap-3 text-zinc-600">
-                    <span class="material-symbols-rounded text-lg">favorite</span>
-                    <span class="material-symbols-rounded">chevron_right</span>
+                <div class="flex items-center gap-4 text-zinc-600">
+                    <span class="material-symbols-rounded text-xl hover:text-pink-500 transition-colors">favorite</span>
+                    <span class="material-symbols-rounded text-2xl">chevron_right</span>
                 </div>
             </div>
 
-            <!-- Song 3 -->
-            <div class="flex items-center gap-4 group">
-                <img src="https://picsum.photos/seed/pulse3/200" class="w-14 h-14 rounded-2xl object-cover group-active:scale-95 transition-transform" alt="Cover">
+            <!-- Canción 3 -->
+            <div class="song-item flex items-center gap-4 group cursor-pointer">
+                <img src="https://picsum.photos/seed/pulse3/200" class="w-14 h-14 rounded-2xl object-cover shadow-lg" alt="Cover">
                 <div class="flex-1">
-                    <h3 class="font-bold text-sm">Digital Pulse</h3>
-                    <p class="text-xs text-zinc-500 italic">Techno Core</p>
+                    <h3 class="font-bold text-sm tracking-wide">Cyber Pulse</h3>
+                    <p class="text-xs text-zinc-500 italic mt-0.5">Techno Core</p>
                 </div>
-                <div class="flex items-center gap-3 text-zinc-600">
-                    <span class="material-symbols-rounded text-lg">favorite</span>
-                    <span class="material-symbols-rounded">chevron_right</span>
+                <div class="flex items-center gap-4 text-zinc-600">
+                    <span class="material-symbols-rounded text-xl hover:text-pink-500 transition-colors">favorite</span>
+                    <span class="material-symbols-rounded text-2xl">chevron_right</span>
                 </div>
             </div>
 
-            <!-- Song 4 -->
-            <div class="flex items-center gap-4 group">
-                <img src="https://picsum.photos/seed/void4/200" class="w-14 h-14 rounded-2xl object-cover group-active:scale-95 transition-transform" alt="Cover">
+             <!-- Canción 4 -->
+             <div class="song-item flex items-center gap-4 group cursor-pointer opacity-80">
+                <img src="https://picsum.photos/seed/ghost4/200" class="w-14 h-14 rounded-2xl object-cover" alt="Cover">
                 <div class="flex-1">
-                    <h3 class="font-bold text-sm">Neon Void</h3>
-                    <p class="text-xs text-zinc-500 italic">Data Ghost</p>
+                    <h3 class="font-bold text-sm tracking-wide">Digital Ghost</h3>
+                    <p class="text-xs text-zinc-500 italic mt-0.5">Void Runner</p>
                 </div>
-                <div class="flex items-center gap-3 text-zinc-600">
-                    <span class="material-symbols-rounded text-lg">favorite</span>
-                    <span class="material-symbols-rounded">chevron_right</span>
+                <div class="flex items-center gap-4 text-zinc-600">
+                    <span class="material-symbols-rounded text-xl">favorite</span>
+                    <span class="material-symbols-rounded text-2xl">chevron_right</span>
                 </div>
             </div>
         </main>
 
-        <!-- Navigation Bar -->
-        <nav class="nav-bar absolute bottom-0 w-full h-16 flex justify-around items-center px-6">
-            <button class="text-zinc-500 hover:text-pink-500 transition-colors">
+        <!-- Navigation Bar (Android Style) -->
+        <nav class="bottom-nav absolute bottom-0 w-full h-16 flex justify-around items-center px-8">
+            <button class="text-zinc-600 hover:text-zinc-400 transition-colors">
                 <span class="material-symbols-rounded text-2xl">arrow_back_ios_new</span>
             </button>
-            <button class="text-white hover:text-pink-500 transition-colors">
+            <button class="text-zinc-300 hover:text-pink-500 transition-colors">
                 <span class="material-symbols-rounded text-4xl">radio_button_checked</span>
             </button>
-            <button class="text-zinc-500 hover:text-pink-500 transition-colors">
+            <button class="text-zinc-600 hover:text-zinc-400 transition-colors">
                 <span class="material-symbols-rounded text-2xl">crop_square</span>
             </button>
         </nav>
     </div>
 
-</body>
-</html>
+    <script>
+        // Pequeña interacción para los botones
+        document.querySelectorAll('.song-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const title = item.querySelector('h3').innerText;
+                console.log('Reproduciendo: ' + title);
+                // Aquí podrías añadir lógica real de reproducción
+            });
+        });
+    </script>
 </body>
 </html>
